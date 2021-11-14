@@ -53,6 +53,38 @@ router.post('/', (req, res) => {
         });
 });
 
+// This route will be found at http://localhost:3001/api/users/login in the browser.
+router.post('/login', (req, res) => {
+    // A GET method carries the request parameter appended in the URL string, whereas a POST method carries the request parameter in req.body, which makes it a more secure way of transferring data from the client to the server
+    // expects {email: 'lernantino@gmail.com', password: 'password1234'}
+    User.findOne({
+        // We queried the User table using the findOne() method for the email entered by the user and assigned it to req.body.email.
+        where: {
+            email: req.body.email 
+        }
+    }).then(dbUserData => {
+        if (!dbUserData) {
+            res.status(400).json({ message: 'No user with that email address!' });
+            return;
+        }
+
+        // res.json({ user: dbUserData });
+
+        // verify the user's identity by matching the password from the user and the hashed password in the database
+        //  the instance method was called on the user retrieved from the database, dbUserData
+        const validPassword = dbUserData.checkPassword(req.body.password);
+
+        // // Because the instance method returns a Boolean, we can use it in a conditional statement to verify whether the user has been verified or no
+        if (!validPassword) {
+            res.status(400).json({ message: 'Incorrect password!' });
+            return;
+          }
+          
+          res.json({ user: dbUserData, message: 'You are now logged in!' });
+
+  });  
+});
+
 // PUT /api/users/1
 router.put('/:id', (req, res) => {
     // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
