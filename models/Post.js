@@ -38,7 +38,7 @@ Post.init(
     { // configure the metadata
         sequelize,
         freezeTableName: true,
-        underscored: true,
+        underscored: true, // In Sequelize, columns are camelcase by default.
         modelName: 'post'
     }
 );
