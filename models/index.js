@@ -15,16 +15,35 @@ Post.belongsTo(User, {
 });
 
 /* With these two .belongsToMany() methods in place, we're allowing both the User and Post models to query each other's information in the context of a vote. If we want to see which users voted on a single post, we can now do that. If we want to see which posts a single user voted on, we can see that too. This makes the data more robust and gives us more capabilities for visualizing this data on the client-side. */
-Vote.belongsToMany(Post, {
+User.belongsToMany(Post, {
     through: Vote,
     as: 'voted_posts', // renames the column header to make more readable
     foreignKey: 'user_id'
 });
-
-Vote.belongsToMany(User, {
+/* Furthermore, the Vote table needs a row of data to be a unique pairing so that it knows which data to pull in when queried on. So because the user_id and post_id pairings must be unique, we're protected from the possibility of a single user voting on one post multiple times. 
+This layer of protection is called a foreign key constraint*/
+Post.belongsToMany(User, {
     through: Vote,
     as: 'voted_posts',
     foreignKey: 'post_id'
 });
 
-module.exports = { User, Post };
+/* By also creating one-to-many associations directly between these models, we can perform aggregated SQL functions between models. In this case, we'll see a total count of votes for a single post when queried. This would be difficult if we hadn't directly associated the Vote model with the other two. */
+
+Vote.belongsTo(User, {
+    foreignKey: 'user_id'
+});
+
+Vote.belongsTo(Post, {
+    foreignKey: 'post_id'
+});
+
+Vote.hasMany(Vote, {
+    foreignKey: 'user_id'
+});
+
+Vote.hasMany(Vote, {
+    foreignKey: 'post_id'
+});
+
+module.exports = { User, Post, Vote };
