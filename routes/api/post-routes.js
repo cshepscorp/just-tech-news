@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
         // Query configuration
         attributes: ['id', 'post_url', 'title', 'created_at'],
         order: [['created_at', 'DESC']], // sort by most recent
-        include: [ // include is like a JOIN
+        include: [ // Instead of using complex JOIN statements with SQL, we can call on Sequelize's include option to perform the join for us.
             {
                 model: User,
                 attributes: ['username']
