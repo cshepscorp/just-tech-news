@@ -1,6 +1,6 @@
 const router = require('express').Router();
 /* included User bc In a query to the post table, we would like to retrieve not only information about each post, but also the user that posted it. With the foreign key, user_id, we can form a JOIN, an essential characteristic of the relational data model*/
-const { Post, User, Vote } = require('../../models');
+const { Post, User, Vote, Comment } = require('../../models');
 // special Sequelize functionality
 const sequelize = require('../../config/connection');
 
@@ -17,6 +17,15 @@ router.get('/', (req, res) => {
             [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']],
         order: [['created_at', 'DESC']], // sort by most recent
         include: [ // Instead of using complex JOIN statements with SQL, we can call on Sequelize's include option to perform the join for us.
+            {
+                model: Comment,
+                attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                // also include the User model itself so it can attach the username to the comment
+                include: {
+                    model: User,
+                    attributes: ['username']
+                }
+            },
             {
                 model: User,
                 attributes: ['username']
@@ -41,10 +50,21 @@ router.get('/:id', (req, res) => {
             'title', 
             'created_at',
             [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']],
-        include: {
-            model: User,
-            attributes: ['username']
-        }
+        include: [
+            {
+                model: Comment,
+                attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                // also include the User model itself so it can attach the username to the comment
+                include: {
+                    model: User,
+                    attributes: ['username']
+                }
+            },
+            {
+                model: User,
+                attributes: ['username']
+            }
+        ]
     })
     .then(dbPostData => {
         if(!dbPostData) {
