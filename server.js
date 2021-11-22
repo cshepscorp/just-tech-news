@@ -1,13 +1,28 @@
 const express = require('express');
-const routes = require('./routes');
+const routes = require('./controllers');
+const app = express();
+const PORT = process.env.PORT || 3001;
 // importing the connection to Sequelize from config/connection.js
 const sequelize = require('./config/connection'); 
 
-const app = express();
-const PORT = process.env.PORT || 3001;
+// to reference css and html stuff
+const path = require('path');
+
+// handlebars
+const exphbs = require('express-handlebars');
+const hbs = exphbs.create({});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
+
+// to reference stylesheets and html stuff
+// express.static() method is a built-in Express.js middleware function that can take all of the contents of a folder and serve them as static assets
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
 
 // turn on routes
 app.use(routes);
