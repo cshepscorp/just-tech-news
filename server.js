@@ -12,9 +12,26 @@ const path = require('path');
 const exphbs = require('express-handlebars');
 const hbs = exphbs.create({});
 
+// session cookie related stuff
+const session = require('express-session');
+
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
+
+// This code sets up an Express.js session and connects the session to our Sequelize database.
+const sess = {
+  secret: process.env.SS,
+  cookie: {},
+  resave: false,
+  saveUninitialized: true,
+  store: new SequelizeStore({
+    db: sequelize
+  })
+};
+
+app.use(session(sess));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 
 
 // to reference stylesheets and html stuff

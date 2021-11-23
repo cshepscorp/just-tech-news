@@ -1,10 +1,11 @@
 const router = require('express').Router();
-const { Post, User, Comment } = require('../models');
+const { Post, User, Comment, Vote } = require('../models');
 // special Sequelize functionality
 const sequelize = require('../config/connection');
 
 // render the homepage.handlebars template (the .handlebars extension is implied)
 router.get('/', (req, res) => {
+  console.log(req.session);
   Post.findAll({
     attributes: [
       'id',
@@ -40,6 +41,16 @@ router.get('/', (req, res) => {
       res.status(500).json(err);
     });
 
+});
+
+// render login
+router.get('/login', (req, res) => {
+  if (req.session.loggedIn) {
+    res.redirect('/');
+    return;
+  }
+
+  res.render('login');
 });
 
 module.exports = router;
