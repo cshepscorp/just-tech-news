@@ -10,7 +10,10 @@ const path = require('path');
 
 // handlebars
 const exphbs = require('express-handlebars');
-const hbs = exphbs.create({});
+const helpers = require('./utils/helpers');
+const hbs = exphbs.create({ helpers });
+
+
 
 // session cookie related stuff
 const session = require('express-session');
