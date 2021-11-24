@@ -2,6 +2,9 @@ const router = require('express').Router();
 /* included User bc In a query to the post table, we would like to retrieve not only information about each post, but also the user that posted it. With the foreign key, user_id, we can form a JOIN, an essential characteristic of the relational data model*/
 const { Comment } = require('../../models');
 
+// checks if user logged in; have session; authorized
+const withAuth = require('../../utils/auth');
+
 router.get('/', (req, res) => {
     Comment.findAll()
     .then(dbPostData => res.json(dbPostData))
@@ -11,7 +14,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
+router.post('/', withAuth, (req, res) => {
     // check the session
     if (req.session) {
         Comment.create({
@@ -27,7 +30,7 @@ router.post('/', (req, res) => {
     }
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', withAuth, (req, res) => {
     Comment.destroy({
         where: {
             id: req.params.id

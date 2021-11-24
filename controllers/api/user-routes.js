@@ -1,6 +1,9 @@
 const router = require('express').Router();
 const { User, Post, Vote, Comment } = require('../../models');
 
+// checks if user logged in; have session; authorized
+const withAuth = require('../../utils/auth');
+
 // GET /api/users
 router.get('/', (req, res) => {
     // Access our User model and run .findAll() method)
@@ -60,7 +63,7 @@ router.get('/:id', (req, res) => {
 });
 
 // POST /api/users
-router.post('/', (req, res) => {
+router.post('/', withAuth, (req, res) => {
     // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
     // Pass in key/value pairs where the keys are what we defined in the User model and the values are what we get from req.body
     User.create({
@@ -139,7 +142,7 @@ router.post('/logout', (req, res) => {
   });
 
 // PUT /api/users/1
-router.put('/:id', (req, res) => {
+router.put('/:id', withAuth, (req, res) => {
     // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
 
     // if req.body has exact key/value pairs to match the model, you can just use `req.body` instead
@@ -163,7 +166,7 @@ router.put('/:id', (req, res) => {
 });
 
 // DELETE /api/users/1
-router.delete('/:id', (req, res) => {
+router.delete('/:id', withAuth, (req, res) => {
     User.destroy({
         where: {
           id: req.params.id

@@ -4,6 +4,10 @@ const apiRoutes = require('./api');
 // what user will see
 const homeRoutes = require('./home-routes.js');
 
+// dashboard
+const dashboardRoutes = require('./dashboard-routes.js');
+
+router.use('/dashboard', dashboardRoutes);
 /* Since we set up the routes the way we did, we don't have to worry about importing multiple files for different endpoints. The router instance in routes/index.js collected everything for us and packaged them up for server.js to use. */
 
 // here we are collecting the packaged group of API endpoints and prefixing them with the path /api

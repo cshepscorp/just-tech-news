@@ -4,6 +4,9 @@ const { Post, User, Vote, Comment } = require('../../models');
 // special Sequelize functionality
 const sequelize = require('../../config/connection');
 
+// checks if user logged in; have session; authorized
+const withAuth = require('../../utils/auth');
+
 // get all users
 router.get('/', (req, res) => {
     console.log('======================');
@@ -81,13 +84,13 @@ router.get('/:id', (req, res) => {
 });
 
 // create a post
-router.post('/', (req, res) => {
+router.post('/', withAuth, (req, res) => {
     // expects {title: 'Taskmaster goes public!', post_url: 'https://taskmaster.com/press', user_id: 1}
     // these can all be found in the Post Model file
     Post.create({
         title: req.body.title,
         post_url: req.body.post_url,
-        user_id: req.body.user_id
+        user_id: req.session.user_id
     })
     .then(dbPostData => res.json(dbPostData))
     .catch(err => {
@@ -100,7 +103,7 @@ router.post('/', (req, res) => {
 // bc we're actually updating the posts' data
 // Make sure this PUT route is defined before the /:id PUT route, though. 
 // Otherwise, Express.js will think the word "upvote" is a valid parameter for /:id.
-router.put('/upvote', (req, res) => {
+router.put('/upvote', withAuth, (req, res) => {
     // make sure the session exists first
     if (req.session) {
       // pass session id along with all destructured properties on req.body
@@ -115,7 +118,7 @@ router.put('/upvote', (req, res) => {
   });
 
 // update a post
-router.put('/:id', (req, res) => {
+router.put('/:id', withAuth, (req, res) => {
     // used the request parameter to find the post, then used the req.body.title value to replace the title of the post
     Post.update(
         {
@@ -142,7 +145,7 @@ router.put('/:id', (req, res) => {
 });
 
 // delete a post
-router.delete('/:id', (req, res) => {
+router.delete('/:id', withAuth, (req, res) => {
     Post.destroy({
         where: {
             id: req.params.id
