@@ -14,7 +14,6 @@ const helpers = require('./utils/helpers');
 const hbs = exphbs.create({ helpers });
 
 // session cookie related stuff
-app.use(express.cookieParser(process.env.SS));
 const session = require('express-session');
 
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
