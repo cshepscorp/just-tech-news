@@ -6,7 +6,9 @@ const sequelize = require('../config/connection');
 // render the homepage.handlebars template (the .handlebars extension is implied)
 router.get('/', (req, res) => {
   console.log(req.session);
+  
   Post.findAll({
+    
     attributes: [
       'id',
       'post_url',
@@ -36,6 +38,7 @@ router.get('/', (req, res) => {
       res.render('homepage', { 
         posts, 
         loggedIn: req.session.loggedIn // tracks users session
+        
       });
 
     })

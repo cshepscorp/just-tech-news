@@ -20,7 +20,7 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 // This code sets up an Express.js session and connects the session to our Sequelize database.
 const sess = {
-  secret: 'lolawall',
+  secret: process.env.SS,
   cookie: {},
   resave: false,
   saveUninitialized: true,
